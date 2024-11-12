@@ -1,0 +1,85 @@
+<% 
+  // album
+  const {
+    items: albumItems
+  } = locals.albums;
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <%- include('../layouts/head', {title : `${locals.title} | Groove`}) %>
+
+    <% if (locals.isArtistAlbum) { %>
+      <style>
+        .card .card-text { text-transform: capitalize; }
+      </style>
+    <% } %>
+
+  </head>
+  <body>
+    <!-- Recently Played -->
+    <%- include('../layouts/recent_played', {recentlyPlayed:
+    locals.recentlyPlayedTracks}) %>
+
+    <article class="page custom-scrollbar" data-page>
+      <!-- Top App Bar -->
+      <%- include('../partials/top_bar', locals.currentProfile) %>
+
+      <!-- Bottom Navigation -->
+      <%- include('../partials/bottom_nav', { currentRoute: '/album' }) %>
+
+      <div class="main" data-main>
+        <section class="section">
+            <div class="title-wrapper">
+                <h2 class="title-large section-title">
+                    <%= locals.title %>
+                </h2>
+            </div>
+
+            <div class="grid-list">
+ 
+               <% albumItems.forEach(({ id, images, name: title, artists, release_date, album_type, uri}) => { %>
+
+                <% 
+                 let year, text;
+                 if (locals.isArtistAlbum) {
+                    year = new Date(release_date).getFullYear();
+                    text = album_type;
+                 } else {
+                    text = artists.map(({ name }) => name).join(', ');
+                 }
+
+                 const image = images.find(item => item.width === 300);
+                %>
+
+                <%- include('../partials/card', {
+                    image,
+                    type: 'album',
+                    title,
+                    year,
+                    text,
+                    link: `/album/${id}`,
+                    uri
+                }) %>
+
+              <% }) %>
+            </div>
+
+            <!-- # Pagination -->
+            <%- include('../partials/pagination', locals.albums) %>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <%- include('../layouts/footer') %>
+
+      <!-- Player sm -->
+      <%- include('../partials/player_sm') %>
+
+      <!-- Player lg -->
+      <%- include('../partials/player_lg') %>
+    </article>
+  </body>
+</html>
