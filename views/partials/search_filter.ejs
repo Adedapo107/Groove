@@ -1,0 +1,40 @@
+<% 
+  const filterItems = [
+   {
+    filterType: 'all',
+    text: 'All'
+   },
+   {
+    filterType: 'albums',
+    text: 'Albums'
+   },
+   {
+    filterType: 'artists',
+    text: 'Artists'
+   },
+   {
+    filterType: 'playlists',
+    text: 'Playlists'
+   },
+   {
+    filterType: 'tracks',
+    text: 'Songs'
+   },
+  ];
+%>
+
+<div class="filter-list" data-list-header>
+
+    <% filterItems.forEach(({ filterType, text }) => { %>
+
+        <% if (locals.searchAll?.[filterType]?.total === 0) return %>
+
+        <%- include('../partials/chip', {
+            filterType,
+            text,
+            type: locals.type,
+            query: locals.query
+        }) %>
+         
+    <% }) %>
+</div>
