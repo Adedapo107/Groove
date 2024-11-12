@@ -1,0 +1,71 @@
+<% 
+ // search artist
+
+ const {
+    items: SearchArtistItems
+ } = locals.searchArtist;
+%>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../layouts/head', {title : `Search | Groove`}) %>
+
+  </head>
+  <body>
+    <!-- Recently Played -->
+    <%- include('../layouts/recent_played', {recentlyPlayed:
+    locals.recentlyPlayedTracks}) %>
+
+    <article class="page custom-scrollbar" data-page>
+      <!-- Top App Bar -->
+      <%- include('../partials/top_bar', locals.currentProfile ) %>
+
+      <!-- Bottom Navigation -->
+      <%- include('../partials/bottom_nav') %>
+
+      <!-- Search Filter List -->
+      <%- include('../partials/search_filter', { type: locals.type }) %>
+
+      <div class="main" data-main>
+
+        <section class="section">
+
+            <div class="grid-list">
+            
+               <% SearchArtistItems.forEach(({ id, images, name: title, type, uri }) => { %>
+
+                   <%  const [ image ] = images || []; %>
+
+                   <%- include('../partials/card', {
+                    variant: 'artist-card',
+                    image,
+                    type: 'artist',
+                    title,
+                    text: type,
+                    link: `/artist/${id}`,
+                    uri
+                   }) %>
+
+                <% }) %>
+            
+            </div>
+
+              <!-- # Pagination -->
+            <%- include('../partials/pagination', locals.searchArtist) %>
+        
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <%- include('../layouts/footer') %>
+
+      <!-- Player sm -->
+      <%- include('../partials/player_sm') %>
+
+      <!-- Player lg -->
+      <%- include('../partials/player_lg') %>
+    </article>
+  </body>
+</html>

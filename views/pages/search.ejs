@@ -1,0 +1,206 @@
+<% 
+ // search all
+
+ const {
+    albums: {
+        total: totalSearchAlbum,
+        items: SearchAlbumItems
+    },
+    artists: {
+        total: totalSearchArtist,
+        items: SearchArtistItems
+    },
+    tracks: {
+        total: totalSearchTracks,
+        items: SearchTrackItems
+    },
+    playlists: {
+        total: totalSearchPlaylist,
+        items: SearchPlaylistItems
+    },
+ } = locals.searchAll;
+%>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../layouts/head', {title : `Search | Groove`}) %>
+
+    <style media="(min-width: 992px;)">
+        .list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .list-item .item-content {
+            grid-template-columns: minmax(0, 1fr) 42px;
+        }
+    </style>
+  </head>
+  <body>
+    <!-- Recently Played -->
+    <%- include('../layouts/recent_played', {recentlyPlayed:
+    locals.recentlyPlayedTracks}) %>
+
+    <article class="page custom-scrollbar" data-page>
+      <!-- Top App Bar -->
+      <%- include('../partials/top_bar', {
+            ...locals.currentProfile,
+            query
+        }) %>
+
+      <!-- Bottom Navigation -->
+      <%- include('../partials/bottom_nav') %>
+
+      <!-- Search Filter List -->
+      <%- include('../partials/search_filter', {
+        searchAll: locals.searchAll,
+        type: locals.type
+      }) %>
+
+      <div class="main" data-main>
+
+        <!-- Tracks -->
+         <% if (totalSearchTracks) { %>
+          <section class="section">
+
+            <div class="title-wrapper">
+                <h2 class="title-large section-title">Songs</h2>
+            </div>
+
+            <div class="list">
+
+                <% SearchTrackItems.forEach(({ album: { images }, artists, duration_ms, id, name: title, uri: trackUri }) => { %>
+
+                    <% const text = artists.map(({ name }) => name).join(', ') %>
+
+                    <%- include('../partials/list_item', {
+                        title,
+                        images,
+                        text,
+                        duration_ms,
+                        id,
+                        trackUri
+                    })%>
+
+                <% }) %>
+            </div>
+          </section>
+         <% } %>
+      </div>
+
+        <!-- Albums -->
+         <% if (totalSearchAlbum) { %>
+          <section class="section">
+
+            <div class="title-wrapper">
+                <h2 class="title-large section-title">Albums</h2>
+            </div>
+
+           <div class="slider" data-slider>
+            <div class="slider-inner">
+
+                <% SearchAlbumItems.forEach(({ id, images, name: title, artists, release_date, uri }) => { %>
+
+                   <% 
+                     const year = new Date(release_date).getFullYear();
+
+                     const text = artists.map(({ name }) => name).join(', ');
+
+                     const image = images.find(item => item.width === 300);
+                   %>
+
+                   <%- include('../partials/card', {
+                    image,
+                    type: 'album',
+                    title,
+                    text,
+                    year,
+                    link: `/album/${id}`,
+                    uri
+                   }) %>
+
+                <% }) %>
+            </div>
+           </div>
+          </section>
+         <% } %>
+
+        <!-- Artists -->
+         <% if (totalSearchArtist) { %>
+          <section class="section">
+
+            <div class="title-wrapper">
+                <h2 class="title-large section-title">Artists</h2>
+            </div>
+
+           <div class="slider" data-slider>
+            <div class="slider-inner">
+
+                <% SearchArtistItems.forEach(({ id, images, name: title, type, uri }) => { %>
+
+                   <%  const [ image ] = images || []; %>
+
+                   <%- include('../partials/card', {
+                    variant: 'artist-card',
+                    image,
+                    type: 'artist',
+                    title,
+                    text: type,
+                    link: `/artist/${id}`,
+                    uri
+                   }) %>
+
+                <% }) %>
+            </div>
+           </div>
+          </section>
+         <% } %>
+
+         <!-- Playlists -->
+         <% if (totalSearchPlaylist) { %>
+          <section class="section">
+
+            <div class="title-wrapper">
+                <h2 class="title-large section-title">Playlists</h2>
+            </div>
+
+           <div class="slider" data-slider>
+            <div class="slider-inner">
+
+                <% SearchPlaylistItems.forEach(({ id, images, name: title, owner, uri }) => { %>
+
+                   <%  
+                     const text = `By ${owner.display_name}`
+
+                     const [ image ] = images || [];
+                   %>
+
+                   <%- include('../partials/card', {
+                    image,
+                    type: 'playlist',
+                    title,
+                    text,
+                    link: `/playlist/${id}`,
+                    uri
+                   }) %>
+
+                <% }) %>
+            </div>
+           </div>
+          </section>
+         <% } %>
+      </div>
+
+      <!-- Footer -->
+      <%- include('../layouts/footer') %>
+
+      <!-- Player sm -->
+      <%- include('../partials/player_sm') %>
+
+      <!-- Player lg -->
+      <%- include('../partials/player_lg') %>
+    </article>
+  </body>
+</html>

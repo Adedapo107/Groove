@@ -1,0 +1,77 @@
+<% 
+ // search track
+
+ const {
+    items: SearchTrackItems,
+    limit,
+    page
+ } = locals.searchTrack;
+%>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../layouts/head', {title : `Search | Groove`}) %>
+
+  </head>
+  <body>
+    <!-- Recently Played -->
+    <%- include('../layouts/recent_played', {recentlyPlayed:
+    locals.recentlyPlayedTracks}) %>
+
+    <article class="page custom-scrollbar" data-page>
+      <!-- Top App Bar -->
+      <%- include('../partials/top_bar', locals.currentProfile ) %>
+
+      <!-- Bottom Navigation -->
+      <%- include('../partials/bottom_nav') %>
+
+      <!-- Search Filter List -->
+      <%- include('../partials/search_filter', { type: locals.type }) %>
+
+      <div class="main" data-main>
+
+        <section class="section">
+
+            <div class="list">
+            
+               <% SearchTrackItems.forEach(({ album: { images, name: albumName }, artists, duration_ms, id, name: title, uri: trackUri }, index) => { %>
+
+                    <% 
+                     const text = artists.map(({ name }) => name).join(', ');
+                     index = (index + 1) + (limit * (page - 1));
+                    %>
+
+                    <%- include('../partials/list_item', {
+                        title,
+                        images,
+                        text,
+                        duration_ms,
+                        id,
+                        trackNumber: index,
+                        albumName,
+                        trackUri
+                    })%>
+
+                <% }) %>
+            
+            </div>
+
+              <!-- # Pagination -->
+            <%- include('../partials/pagination', locals.searchTrack) %>
+        
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <%- include('../layouts/footer') %>
+
+      <!-- Player sm -->
+      <%- include('../partials/player_sm') %>
+
+      <!-- Player lg -->
+      <%- include('../partials/player_lg') %>
+    </article>
+  </body>
+</html>
