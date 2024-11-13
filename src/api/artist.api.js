@@ -20,13 +20,21 @@ const { getUrlQuery } = require("../utils/helpers.util");
  * @returns {Object}
  */
 const getSeveralDetail = async (req, artistIds) => {
-  const { data: trackArtists } = await getData(
-    `/artists?ids=${artistIds}`,
-    req.cookies.access_token
-  );
-
-  return trackArtists;
+  try {
+    const cleanedArtistIds = artistIds.replace(/\s+/g, '');
+    const response = await getData(
+      `/artists?ids=${cleanedArtistIds}`,
+      req.cookies.access_token
+    );
+    const trackArtists = response?.data;
+    if (!trackArtists) throw new Error("No data received");
+    return trackArtists;
+  } catch (error) {
+    console.error("Error fetching artist details:", error.message);
+    throw error; // rethrow or handle it based on your app logic
+  }
 };
+
 
 /**
  * Get Spotify catalog information about an artist's album
